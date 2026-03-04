@@ -1,106 +1,448 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CBB Prediction Model</title>
   <style>
-    :root{--bg:#f4f6f8;--card:#fff;--text:#101828;--muted:#667085;--border:#eaecf0;}
-    body{font-family:Arial,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);margin:0;padding:28px;color:var(--text)}
-    h1{margin:0 0 10px 0}
-    .sub{color:var(--muted);margin-bottom:18px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;max-width:1100px;box-shadow:0 10px 30px rgba(16,24,40,.06)}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
-    th{color:var(--muted);font-weight:600}
-    .pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;color:var(--muted)}
-    .pos{color:#067647;font-weight:700}
-    .neg{color:#b42318;font-weight:700}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
-    .rownote{color:var(--muted);font-size:12px;margin-top:4px}
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --border:#e6e8ee;
+      --shadow:0 10px 30px rgba(2,6,23,.06);
+      --good:#0f7b3a;
+      --bad:#b42318;
+      --pill:#f1f5f9;
+      --pillText:#334155;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:var(--bg);
+    }
+    .wrap{max-width:1120px;margin:28px auto;padding:0 18px}
+    h1{margin:0 0 10px 0;font-size:38px;letter-spacing:-0.02em}
+    .topbar{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+      margin:10px 0 18px 0;
+    }
+    .pills{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;background:var(--pill);color:var(--pillText);
+      font-size:12px;border:1px solid var(--border);
+    }
+    .pill b{font-weight:700}
+    .controls{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end;
+    }
+    .input, .select, .btn{
+      height:36px;border-radius:10px;border:1px solid var(--border);
+      background:#fff;color:var(--text);
+      padding:0 12px;font-size:13px;
+      box-shadow: 0 1px 0 rgba(2,6,23,.02);
+    }
+    .input{min-width:220px}
+    .select{min-width:170px}
+    .btn{cursor:pointer}
+    .btn:active{transform:translateY(1px)}
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .tableWrap{overflow:auto}
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      min-width:920px;
+    }
+    thead th{
+      text-align:left;
+      font-size:12px;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:var(--muted);
+      background:linear-gradient(#ffffff, #fafbff);
+      position:sticky;top:0;
+      z-index:1;
+      border-bottom:1px solid var(--border);
+      padding:14px 14px;
+      white-space:nowrap;
+      cursor:pointer;
+      user-select:none;
+    }
+    thead th .sort{
+      margin-left:6px;
+      font-size:11px;
+      color:#94a3b8;
+    }
+    tbody td{
+      padding:14px 14px;
+      border-bottom:1px solid var(--border);
+      vertical-align:top;
+      font-size:14px;
+    }
+    tbody tr:last-child td{border-bottom:0}
+    .time{white-space:nowrap;color:#0b1220;font-variant-numeric:tabular-nums}
+    .matchup{font-weight:650}
+    .sub{
+      margin-top:3px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .num{
+      font-variant-numeric:tabular-nums;
+      white-space:nowrap;
+    }
+    .edge{
+      font-weight:750;
+      font-variant-numeric:tabular-nums;
+    }
+    .edge.pos{color:var(--good)}
+    .edge.neg{color:var(--bad)}
+    .note{
+      color:var(--muted);
+      font-size:12px;
+      margin-top:3px;
+      white-space:nowrap;
+    }
+    .badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:2px 8px;border-radius:999px;border:1px solid var(--border);
+      background:#fff;
+      font-size:12px;color:#334155;
+      white-space:nowrap;
+    }
+    .muted{color:var(--muted)}
+    .empty{
+      padding:22px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .error{
+      padding:18px 22px;
+      color:#7f1d1d;
+      background:#fff5f5;
+      border-top:1px solid #fecaca;
+      border-bottom:1px solid #fecaca;
+      font-size:14px;
+    }
+
+    /* Edge highlight rows */
+    .edge-strong{ background-color:#e8f7ee; }
+    .edge-medium{ background-color:#f4fbf7; }
+
+    /* Small screens */
+    @media (max-width:680px){
+      h1{font-size:30px}
+      .input{min-width:180px}
+    }
   </style>
 </head>
 <body>
-  <h1>CBB Prediction Model</h1>
-  <div class="sub" id="meta">Loading…</div>
+  <div class="wrap">
+    <h1>CBB Prediction Model</h1>
 
-  <div class="card">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th>Time (ET)</th>
-          <th>Matchup</th>
-          <th>Market</th>
-          <th>Model</th>
-          <th>Edge</th>
-          <th>Win %</th>
-          <th>Conf</th>
-          <th>Note</th>
-        </tr>
-      </thead>
-      <tbody id="body">
-        <tr><td colspan="8">Loading predictions…</td></tr>
-      </tbody>
-    </table>
+    <div class="topbar">
+      <div class="pills" id="metaPills">
+        <span class="pill"><b>Model:</b> <span id="modelVersion">—</span></span>
+        <span class="pill"><b>Generated:</b> <span id="generatedAt">—</span></span>
+        <span class="pill"><b>Games:</b> <span id="gamesCount">—</span></span>
+      </div>
+
+      <div class="controls">
+        <input id="search" class="input" placeholder="Search teams… (e.g., Creighton)" />
+        <select id="edgeFilter" class="select" title="Edge filter">
+          <option value="all">All games</option>
+          <option value="1">Edge ≥ 1.0</option>
+          <option value="2">Edge ≥ 2.0</option>
+          <option value="3">Edge ≥ 3.0</option>
+        </select>
+        <button id="reload" class="btn" type="button">Reload</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div id="status" class="empty">Loading…</div>
+      <div class="tableWrap" id="tableWrap" style="display:none;">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="time_et">Time (ET) <span class="sort" id="sort-time_et"></span></th>
+              <th data-sort="matchup">Matchup <span class="sort" id="sort-matchup"></span></th>
+              <th data-sort="market_spread">Market <span class="sort" id="sort-market_spread"></span></th>
+              <th data-sort="model_spread">Model <span class="sort" id="sort-model_spread"></span></th>
+              <th data-sort="edge_pts">Edge <span class="sort" id="sort-edge_pts"></span></th>
+              <th data-sort="win_prob">Win % <span class="sort" id="sort-win_prob"></span></th>
+              <th data-sort="confidence">Conf <span class="sort" id="sort-confidence"></span></th>
+              <th data-sort="note">Note <span class="sort" id="sort-note"></span></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <script>
-    function fmtNum(x){
-      if (x === null || x === undefined) return "—";
-      const n = Number(x);
-      if (Number.isNaN(n)) return "—";
+    // ---- Config ----
+    // IMPORTANT: keep this path ROOT-relative so it works on Vercel and locally.
+    const DATA_URL = "/output/today_predictions.json";
+
+    // ---- State ----
+    let rawGames = [];
+    let viewGames = [];
+    let sortKey = "edge_pts";
+    let sortDir = "desc"; // "asc" | "desc"
+
+    // ---- Helpers ----
+    const $ = (id) => document.getElementById(id);
+
+    function fmtISOToLocal(iso){
+      if(!iso) return "—";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString(undefined, { year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
+    }
+
+    function num(v){
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function fmtSpread(v){
+      const n = num(v);
+      if (n === null) return "—";
+      // show + for positive
       return (n > 0 ? "+" : "") + n.toFixed(1);
     }
-    function fmtPct(p){
-      if (p === null || p === undefined) return "—";
-      const n = Number(p);
-      if (Number.isNaN(n)) return "—";
-      return Math.round(n * 100) + "%";
-    }
-    function edgeClass(e){
-      if (e === null || e === undefined) return "";
-      const n = Number(e);
-      if (Number.isNaN(n)) return "";
-      return n >= 0 ? "pos" : "neg";
+
+    function fmtEdge(v){
+      const n = num(v);
+      if (n === null) return "—";
+      return (n > 0 ? "+" : "") + n.toFixed(1);
     }
 
-    fetch("/output/today_predictions.json", { cache: "no-store" })
-      .then(r => r.json())
-      .then(data => {
-        const meta = document.getElementById("meta");
-        meta.innerHTML = `
-          <span class="pill">Model: <span class="mono">${data.model_version ?? "—"}</span></span>
-          &nbsp; <span class="pill">Generated: <span class="mono">${data.generated_at ?? "—"}</span></span>
-          &nbsp; <span class="pill">Games: <span class="mono">${data.summary?.games_count ?? (data.todays_games?.length ?? 0)}</span></span>
-        `;
+    function fmtPct(v){
+      const n = num(v);
+      if (n === null) return "—";
+      // accept 0-1 or 0-100
+      const pct = (n <= 1 ? n * 100 : n);
+      return Math.round(pct) + "%";
+    }
 
-        const body = document.getElementById("body");
-        const games = data.todays_games || [];
-        if (!games.length){
-          body.innerHTML = `<tr><td colspan="8">No games in todays_games.</td></tr>`;
-          return;
-        }
+    function edgeClass(edgePts){
+      const e = num(edgePts);
+      if (e === null) return "";
+      if (e >= 2) return "edge-strong";
+      if (e >= 1) return "edge-medium";
+      return "";
+    }
 
-        body.innerHTML = games.map(g => `
-          <tr>
-            <td>${g.time_et ?? "—"}</td>
-            <td>
-              <div><b>${g.matchup ?? "—"}</b></div>
-              ${g.note ? `<div class="rownote">${g.note}</div>` : ``}
-            </td>
-            <td>${fmtNum(g.market_spread)}</td>
-            <td>${fmtNum(g.model_spread)}</td>
-            <td class="${edgeClass(g.edge_pts)}">${fmtNum(g.edge_pts)}</td>
-            <td>${fmtPct(g.win_prob)}</td>
-            <td>${g.confidence ?? "—"}</td>
-            <td>${g.note ? "" : "—"}</td>
-          </tr>
-        `).join("");
-      })
-      .catch(err => {
-        document.getElementById("body").innerHTML =
-          `<tr><td colspan="8">Error loading predictions: ${String(err)}</td></tr>`;
+    function edgeTextClass(edgePts){
+      const e = num(edgePts);
+      if (e === null) return "";
+      if (e > 0) return "pos";
+      if (e < 0) return "neg";
+      return "";
+    }
+
+    // Parse "7:00 PM" / "12:00 AM" to minutes since midnight for sorting.
+    function timeToMinutes(t){
+      if(!t || typeof t !== "string") return null;
+      const m = t.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i);
+      if(!m) return null;
+      let h = parseInt(m[1],10);
+      const min = parseInt(m[2] || "0",10);
+      const ap = m[3].toUpperCase();
+      if (ap === "AM") {
+        if (h === 12) h = 0;
+      } else { // PM
+        if (h !== 12) h += 12;
+      }
+      return h*60 + min;
+    }
+
+    function compare(a, b, key){
+      const av = a?.[key];
+      const bv = b?.[key];
+
+      // special for time
+      if (key === "time_et"){
+        const am = timeToMinutes(av);
+        const bm = timeToMinutes(bv);
+        if (am === null && bm === null) return 0;
+        if (am === null) return 1;
+        if (bm === null) return -1;
+        return am - bm;
+      }
+
+      // numeric keys
+      if (["market_spread","model_spread","edge_pts","win_prob","confidence"].includes(key)){
+        const an = num(av);
+        const bn = num(bv);
+        if (an === null && bn === null) return 0;
+        if (an === null) return 1;
+        if (bn === null) return -1;
+        return an - bn;
+      }
+
+      // text keys
+      const as = (av ?? "").toString().toLowerCase();
+      const bs = (bv ?? "").toString().toLowerCase();
+      if (as < bs) return -1;
+      if (as > bs) return 1;
+      return 0;
+    }
+
+    function setSort(key){
+      if (sortKey === key){
+        sortDir = (sortDir === "desc") ? "asc" : "desc";
+      } else {
+        sortKey = key;
+        // default direction: numeric desc, text asc, time asc
+        sortDir = ["edge_pts","confidence","win_prob"].includes(key) ? "desc" : "asc";
+      }
+      render();
+    }
+
+    function updateSortIndicators(){
+      const keys = ["time_et","matchup","market_spread","model_spread","edge_pts","win_prob","confidence","note"];
+      keys.forEach(k => {
+        const el = $("sort-" + k);
+        if(!el) return;
+        if(k !== sortKey){ el.textContent = ""; return; }
+        el.textContent = (sortDir === "asc") ? "▲" : "▼";
       });
+    }
+
+    // ---- Rendering ----
+    function render(){
+      const q = $("search").value.trim().toLowerCase();
+      const edgeMin = $("edgeFilter").value; // "all" or number
+
+      viewGames = rawGames.slice();
+
+      // filter by search
+      if (q){
+        viewGames = viewGames.filter(g => {
+          const m = (g.matchup ?? "").toString().toLowerCase();
+          const n = (g.note ?? "").toString().toLowerCase();
+          return m.includes(q) || n.includes(q);
+        });
+      }
+
+      // filter by edge threshold
+      if (edgeMin !== "all"){
+        const thr = Number(edgeMin);
+        viewGames = viewGames.filter(g => (num(g.edge_pts) ?? -Infinity) >= thr);
+      }
+
+      // sort
+      viewGames.sort((a,b) => {
+        const c = compare(a,b,sortKey);
+        return sortDir === "asc" ? c : -c;
+      });
+
+      updateSortIndicators();
+
+      const tbody = $("tbody");
+      tbody.innerHTML = "";
+
+      if (!viewGames.length){
+        $("tableWrap").style.display = "none";
+        $("status").style.display = "block";
+        $("status").className = "empty";
+        $("status").textContent = rawGames.length ? "No games match your filters." : "No games in todays_games.";
+        return;
+      }
+
+      $("status").style.display = "none";
+      $("tableWrap").style.display = "block";
+
+      for (const g of viewGames){
+        const tr = document.createElement("tr");
+        const rowCls = edgeClass(g.edge_pts);
+        if (rowCls) tr.classList.add(rowCls);
+
+        const noteText = (g.note ?? "").toString();
+        const marketSrc = (g.market_source ?? "").toString(); // optional
+
+        tr.innerHTML = `
+          <td class="time">${(g.time_et ?? "—")}</td>
+          <td>
+            <div class="matchup">${(g.matchup ?? "—")}</div>
+            ${marketSrc ? `<div class="note">${marketSrc}</div>` : (noteText ? `<div class="note">${noteText}</div>` : ``)}
+          </td>
+          <td class="num">${fmtSpread(g.market_spread)}</td>
+          <td class="num">${fmtSpread(g.model_spread)}</td>
+          <td class="num edge ${edgeTextClass(g.edge_pts)}">${fmtEdge(g.edge_pts)}</td>
+          <td class="num">${fmtPct(g.win_prob)}</td>
+          <td class="num"><span class="badge">${(num(g.confidence) ?? "—")}</span></td>
+          <td class="muted">${noteText ? noteText : "—"}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ---- Data load ----
+    async function load(){
+      $("status").style.display = "block";
+      $("status").className = "empty";
+      $("status").textContent = "Loading…";
+      $("tableWrap").style.display = "none";
+
+      try{
+        const res = await fetch(DATA_URL, { cache: "no-store" });
+        if(!res.ok){
+          throw new Error(`HTTP ${res.status} when fetching ${DATA_URL}`);
+        }
+        const data = await res.json();
+
+        // meta
+        $("modelVersion").textContent = data.model_version ?? "—";
+        $("generatedAt").textContent = fmtISOToLocal(data.generated_at);
+        const count = data?.summary?.games_count ?? (Array.isArray(data.todays_games) ? data.todays_games.length : 0);
+        $("gamesCount").textContent = String(count);
+
+        // rows
+        rawGames = Array.isArray(data.todays_games) ? data.todays_games : [];
+        // default sort: edge desc
+        sortKey = "edge_pts";
+        sortDir = "desc";
+
+        // If model includes "pick" fields later, keep compatibility.
+        render();
+      } catch(err){
+        $("tableWrap").style.display = "none";
+        $("status").style.display = "block";
+        $("status").className = "error";
+        $("status").textContent = `Error loading predictions: ${err?.message ?? err}`;
+        console.error(err);
+      }
+    }
+
+    // ---- Events ----
+    document.addEventListener("click", (e) => {
+      const th = e.target.closest("th[data-sort]");
+      if(!th) return;
+      setSort(th.getAttribute("data-sort"));
+    });
+
+    $("search").addEventListener("input", () => render());
+    $("edgeFilter").addEventListener("change", () => render());
+    $("reload").addEventListener("click", () => load());
+
+    // ---- Start ----
+    load();
   </script>
 </body>
 </html>
