@@ -1,255 +1,320 @@
 from __future__ import annotations
 
+import csv
 import json
+import math
 import os
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 
-ODDS_API_KEY = os.getenv("ODDS_API_KEY", "").strip()
 
-# --- Odds API config ---
+# ----------------------------
+# Config
+# ----------------------------
 SPORT_KEY = "basketball_ncaab"
-REGIONS = "us"
-MARKETS = "spreads"
-ODDS_FORMAT = "american"
-DATE_FORMAT = "iso"
-BOOKMAKER_PREFERENCE = [
-    "draftkings",
-    "fanduel",
-    "betmgm",
-    "pointsbetus",
-    "caesars",
-]
+ODDS_API_BASE = "https://api.the-odds-api.com/v4"
+
+# Output locations (keep both so Vercel/GitHub Pages setups work either way)
+OUT_ROOT = Path("output") / "today_predictions.json"
+OUT_DASH = Path("dashboard") / "output" / "today_predictions.json"
+
+RATINGS_PATH = Path("data") / "efficiency.csv"
+
+# Model knobs
+BASE_EFF = 100.0          # baseline points/100
+HOME_ADV_PTS = 2.2        # approx home advantage in points
+MARGIN_STD = 11.0         # std dev for margin -> win prob
+
+
+# ----------------------------
+# Data structures
+# ----------------------------
+@dataclass(frozen=True)
+class TeamRatings:
+    team: str
+    adj_o: float
+    adj_d: float
+    tempo: float
 
 
 @dataclass
-class GamePick:
-    time_et: str
-    matchup: str
-    market_spread: Optional[float]
-    model_spread: Optional[float]
-    edge_pts: Optional[float]
-    win_prob: Optional[float]
-    confidence: Optional[int]
-    note: str
+class Game:
+    commence_time: str
+    home_team: str
+    away_team: str
+    market_home_spread: Optional[float]  # spread from API (home line)
+    sportsbook: Optional[str]
 
 
-def ensure_dirs() -> None:
-    Path("output").mkdir(parents=True, exist_ok=True)
-    Path("dashboard/output").mkdir(parents=True, exist_ok=True)
-
-
-def utcnow_iso() -> str:
+# ----------------------------
+# Helpers
+# ----------------------------
+def utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def fetch_odds_games() -> List[Dict[str, Any]]:
-    """
-    Pull today's NCAAB odds (spreads) from The Odds API.
-    Docs: https://the-odds-api.com/
-    """
-    if not ODDS_API_KEY:
-        raise RuntimeError("Missing ODDS_API_KEY secret/env var")
+def norm_cdf(x: float) -> float:
+    # Standard normal CDF via erf
+    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
 
-    url = f"https://api.the-odds-api.com/v4/sports/{SPORT_KEY}/odds"
+
+def win_prob_from_margin(margin_pts_for_home: float, std: float = MARGIN_STD) -> float:
+    # P(home wins) assuming margin ~ Normal(mean=margin, std=std)
+    return norm_cdf(margin_pts_for_home / std)
+
+
+def clamp(n: float, lo: float, hi: float) -> float:
+    return max(lo, min(hi, n))
+
+
+def load_ratings(path: Path) -> Dict[str, TeamRatings]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing ratings file: {path.as_posix()}")
+
+    ratings: Dict[str, TeamRatings] = {}
+    with path.open("r", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        required = {"team", "adj_o", "adj_d", "tempo"}
+        if not required.issubset(set(reader.fieldnames or [])):
+            raise ValueError(f"{path.as_posix()} must have columns: team, adj_o, adj_d, tempo")
+
+        for row in reader:
+            team = (row["team"] or "").strip()
+            if not team:
+                continue
+            ratings[team.lower()] = TeamRatings(
+                team=team,
+                adj_o=float(row["adj_o"]),
+                adj_d=float(row["adj_d"]),
+                tempo=float(row["tempo"]),
+            )
+    return ratings
+
+
+def pick_best_spread(bookmakers: List[Dict[str, Any]]) -> Tuple[Optional[float], Optional[str]]:
+    """
+    Returns (home_spread, sportsbook).
+    Uses the first available spread market; prefers FanDuel/DK/BetMGM if present.
+    """
+    preferred = ["fanduel", "draftkings", "betmgm", "pointsbetus", "caesars", "betrivers"]
+
+    def market_home_spread_from_bm(bm: Dict[str, Any]) -> Optional[float]:
+        markets = bm.get("markets") or []
+        for m in markets:
+            if m.get("key") != "spreads":
+                continue
+            outcomes = m.get("outcomes") or []
+            # For spreads market, outcomes include home & away with "point"
+            # We want the HOME team's point.
+            for o in outcomes:
+                if "name" in o and "point" in o:
+                    # We'll match later after we know home team name; so return dict-like? nope.
+                    pass
+        return None
+
+    # We'll just scan and return first BM that contains spreads;
+    # later, we compute actual home spread by matching outcome "name" to home team.
+    for key in preferred:
+        for bm in bookmakers:
+            if bm.get("key") == key:
+                return None, key  # signal preferred found; spread extracted later
+    # fallback: any bookmaker
+    if bookmakers:
+        return None, bookmakers[0].get("key")
+    return None, None
+
+
+def extract_home_spread(bookmakers: List[Dict[str, Any]], home_team: str) -> Tuple[Optional[float], Optional[str]]:
+    # Try preferred order, then any
+    preferred = ["fanduel", "draftkings", "betmgm", "pointsbetus", "caesars", "betrivers"]
+
+    def try_bm(bm: Dict[str, Any]) -> Optional[float]:
+        markets = bm.get("markets") or []
+        for m in markets:
+            if m.get("key") != "spreads":
+                continue
+            outcomes = m.get("outcomes") or []
+            for o in outcomes:
+                if (o.get("name") or "").strip().lower() == home_team.strip().lower():
+                    pt = o.get("point", None)
+                    if pt is None:
+                        return None
+                    return float(pt)
+        return None
+
+    # preferred pass
+    for key in preferred:
+        for bm in bookmakers:
+            if bm.get("key") == key:
+                sp = try_bm(bm)
+                if sp is not None:
+                    return sp, key
+
+    # any pass
+    for bm in bookmakers:
+        sp = try_bm(bm)
+        if sp is not None:
+            return sp, bm.get("key")
+
+    return None, None
+
+
+def fetch_odds_games() -> List[Game]:
+    api_key = os.environ.get("ODDS_API_KEY", "").strip()
+    if not api_key:
+        raise RuntimeError("Missing ODDS_API_KEY env var (add it as a GitHub Actions secret).")
+
+    url = f"{ODDS_API_BASE}/sports/{SPORT_KEY}/odds"
     params = {
-        "apiKey": ODDS_API_KEY,
-        "regions": REGIONS,
-        "markets": MARKETS,
-        "oddsFormat": ODDS_FORMAT,
-        "dateFormat": DATE_FORMAT,
+        "apiKey": api_key,
+        "regions": "us",
+        "markets": "spreads",
+        "oddsFormat": "american",
+        "dateFormat": "iso",
     }
-    resp = requests.get(url, params=params, timeout=25)
-    resp.raise_for_status()
-    data = resp.json()
-    if not isinstance(data, list):
-        raise RuntimeError("Unexpected Odds API response format")
-    return data
 
+    res = requests.get(url, params=params, timeout=30)
+    if res.status_code != 200:
+        raise RuntimeError(f"Odds API error {res.status_code}: {res.text[:300]}")
 
-def pick_bookmaker(bookmakers: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
-    if not bookmakers:
-        return None
-    by_key = {b.get("key"): b for b in bookmakers if b.get("key")}
-    for k in BOOKMAKER_PREFERENCE:
-        if k in by_key:
-            return by_key[k]
-    return bookmakers[0]
+    data = res.json()
+    games: List[Game] = []
 
+    for g in data:
+        home = g.get("home_team")
+        away = g.get("away_team")
+        commence = g.get("commence_time") or ""
+        bookmakers = g.get("bookmakers") or []
 
-def extract_spread(game: Dict[str, Any]) -> Tuple[Optional[float], str]:
-    """
-    Returns (market_spread_for_away_team, source_note).
-    Convention: market_spread is spread applied to AWAY team.
-    Example: Away -3.5 means away favored by 3.5.
-    """
-    bookmakers = game.get("bookmakers") or []
-    book = pick_bookmaker(bookmakers)
-    if not book:
-        return None, "No market spread"
+        market_spread, book = extract_home_spread(bookmakers, home)
 
-    markets = book.get("markets") or []
-    spreads = next((m for m in markets if m.get("key") == "spreads"), None)
-    if not spreads:
-        return None, f"No spreads market ({book.get('key','book')})"
-
-    outcomes = spreads.get("outcomes") or []
-    home = game.get("home_team")
-    away = game.get("away_team")
-
-    # Outcomes usually have "name" and "point"
-    home_out = next((o for o in outcomes if o.get("name") == home), None)
-    away_out = next((o for o in outcomes if o.get("name") == away), None)
-
-    # If away outcome exists, use its point directly
-    if away_out and isinstance(away_out.get("point"), (int, float)):
-        return float(away_out["point"]), f"{book.get('key','book')} spread"
-
-    # Otherwise infer from home outcome (away = -home)
-    if home_out and isinstance(home_out.get("point"), (int, float)):
-        return float(-home_out["point"]), f"{book.get('key','book')} spread"
-
-    return None, f"Bad spread data ({book.get('key','book')})"
-
-
-def simple_model_spread(market_spread: Optional[float]) -> Optional[float]:
-    """
-    Placeholder for now: "model" tweaks market a bit.
-    We'll replace this with real efficiency/tempo model next.
-    """
-    if market_spread is None:
-        return None
-    # Tiny tilt so we can see edges
-    return float(market_spread) - 1.0
-
-
-def spread_to_win_prob(model_spread: Optional[float]) -> Optional[float]:
-    """
-    Very rough mapping: convert spread to win probability.
-    We'll replace with calibrated curve later.
-    """
-    if model_spread is None:
-        return None
-    # logistic-ish approximation
-    import math
-    return 1.0 / (1.0 + math.exp(model_spread / 6.0))
-
-
-def confidence_from_edge(edge: Optional[float]) -> Optional[int]:
-    if edge is None:
-        return None
-    e = abs(edge)
-    # 0-100 scale
-    c = int(min(95, max(50, 50 + e * 10)))
-    return c
-
-
-def format_time_et(commence_time_iso: str) -> str:
-    # We will keep it simple: show local-ish time string based on ISO (UTC) without tz conversion.
-    # (We can add real ET conversion next if you want.)
-    try:
-        dt = datetime.fromisoformat(commence_time_iso.replace("Z", "+00:00"))
-        # display as HH:MM AM/PM
-        return dt.strftime("%-I:%M %p")
-    except Exception:
-        return "TBD"
-
-
-def build_predictions(games: List[Dict[str, Any]]) -> Dict[str, Any]:
-    picks: List[GamePick] = []
-
-    for g in games:
-        home = g.get("home_team", "Home")
-        away = g.get("away_team", "Away")
-        matchup = f"{away} @ {home}"
-
-        market_spread, market_note = extract_spread(g)
-        model_spread = simple_model_spread(market_spread)
-        edge = None if (market_spread is None or model_spread is None) else (market_spread - model_spread)
-
-        win_prob = spread_to_win_prob(model_spread)
-        conf = confidence_from_edge(edge)
-
-        note = "Model edge" if (edge is not None and edge >= 2.0) else ("Lean dog" if (market_spread is not None and market_spread > 0) else "")
-        if market_spread is None:
-            note = "No market spread"
-
-        time_et = format_time_et(g.get("commence_time", ""))
-
-        picks.append(
-            GamePick(
-                time_et=time_et,
-                matchup=matchup,
-                market_spread=market_spread,
-                model_spread=model_spread,
-                edge_pts=edge,
-                win_prob=win_prob,
-                confidence=conf,
-                note=note if note else market_note,
+        games.append(
+            Game(
+                commence_time=commence,
+                home_team=home,
+                away_team=away,
+                market_home_spread=market_spread,
+                sportsbook=book,
             )
         )
 
-    out = {
-        "generated_at": utcnow_iso(),
-        "model_version": "v0.4",
-        "summary": {"games_count": len(picks)},
-        "todays_games": [asdict(p) for p in picks],
-    }
-    return out
+    return games
 
 
-def fallback_predictions() -> Dict[str, Any]:
-    return {
-        "generated_at": utcnow_iso(),
-        "model_version": "v0.4",
-        "summary": {"games_count": 2},
-        "todays_games": [
+def project_home_margin(home: TeamRatings, away: TeamRatings) -> float:
+    """
+    KenPom-style: expected points/100 for each side based on offense vs opponent defense.
+    Using multiplicative interaction around BASE_EFF:
+      home_pp100 = home_adjO * (away_adjD / BASE_EFF)
+      away_pp100 = away_adjO * (home_adjD / BASE_EFF)
+
+    Then scale by possessions (tempo average / 100).
+    """
+    poss = (home.tempo + away.tempo) / 2.0
+
+    home_pp100 = home.adj_o * (away.adj_d / BASE_EFF)
+    away_pp100 = away.adj_o * (home.adj_d / BASE_EFF)
+
+    margin = (home_pp100 - away_pp100) * (poss / 100.0)
+    margin += HOME_ADV_PTS
+    return margin
+
+
+def time_et_label(iso_time: str) -> str:
+    # Keep it simple: show ISO time if parsing fails.
+    # (If you want perfect ET conversion, we can add zoneinfo next.)
+    try:
+        dt = datetime.fromisoformat(iso_time.replace("Z", "+00:00"))
+        # Display as local string; GitHub runner is UTC, but dashboard is fine with a label.
+        # We'll just show HH:MM (ET) is handled later if you want.
+        return dt.strftime("%I:%M %p").lstrip("0")
+    except Exception:
+        return "—"
+
+
+def build_predictions(games: List[Game], ratings: Dict[str, TeamRatings]) -> Dict[str, Any]:
+    rows = []
+
+    for g in games:
+        home = ratings.get(g.home_team.lower())
+        away = ratings.get(g.away_team.lower())
+        if not home or not away:
+            # skip if we don't have ratings yet
+            continue
+
+        margin_home = project_home_margin(home, away)
+        # Spread is "home line": negative means home favored.
+        model_home_spread = -margin_home
+
+        market = g.market_home_spread
+        edge = None
+        note = ""
+
+        if market is not None:
+            # Positive edge means our model makes the home spread "more negative" than market
+            # Example: market -2.5, model -5.0 => edge = (+2.5) (value on home -2.5)
+            edge = market - model_home_spread
+
+            if edge >= 1.5:
+                note = "Home value"
+            elif edge <= -1.5:
+                note = "Away value"
+            else:
+                note = "Small edge"
+        else:
+            note = "No market line"
+
+        wp_home = win_prob_from_margin(margin_home)
+        # Confidence: scale with edge magnitude if market exists; else neutral-ish
+        conf = 60
+        if edge is not None:
+            conf = int(clamp(55 + abs(edge) * 6, 55, 90))
+
+        rows.append(
             {
-                "time_et": "7:00 PM",
-                "matchup": "Team A @ Team B",
-                "market_spread": -3.5,
-                "model_spread": -5.8,
-                "edge_pts": 2.3,
-                "win_prob": 0.66,
-                "confidence": 73,
-                "note": "Model edge (fallback)",
-            },
-            {
-                "time_et": "9:00 PM",
-                "matchup": "Team C @ Team D",
-                "market_spread": 6.0,
-                "model_spread": 4.2,
-                "edge_pts": 1.8,
-                "win_prob": 0.41,
-                "confidence": 60,
-                "note": "Lean dog (fallback)",
-            },
-        ],
+                "time_et": time_et_label(g.commence_time),
+                "matchup": f"{g.away_team} @ {g.home_team}",
+                "market_spread": market,
+                "model_spread": round(model_home_spread, 1),
+                "edge_pts": round(edge, 1) if edge is not None else None,
+                "win_prob": round(wp_home, 3),
+                "confidence": conf,
+                "note": note,
+                "market_source": (g.sportsbook or "").lower() + " spread" if g.sportsbook else "",
+            }
+        )
+
+    # Sort: biggest absolute edge first, then confidence
+    rows.sort(key=lambda r: (abs(r["edge_pts"] or 0), r["confidence"]), reverse=True)
+
+    payload = {
+        "generated_at": utc_now_iso(),
+        "model_version": "v0.5-eff",
+        "summary": {"games_count": len(rows)},
+        "todays_games": rows,
     }
+    return payload
 
 
-def write_outputs(payload: Dict[str, Any]) -> None:
-    ensure_dirs()
-    text = json.dumps(payload, indent=2)
-
-    Path("output/today_predictions.json").write_text(text, encoding="utf-8")
-    Path("dashboard/output/today_predictions.json").write_text(text, encoding="utf-8")
-    print("Wrote output/today_predictions.json and dashboard/output/today_predictions.json")
+def write_json(path: Path, obj: Dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
 
 
 def main() -> None:
-    try:
-        games = fetch_odds_games()
-        payload = build_predictions(games)
-    except Exception as e:
-        print(f"[WARN] Using fallback predictions due to error: {e}")
-        payload = fallback_predictions()
+    ratings = load_ratings(RATINGS_PATH)
+    games = fetch_odds_games()
+    payload = build_predictions(games, ratings)
 
-    write_outputs(payload)
+    write_json(OUT_ROOT, payload)
+    write_json(OUT_DASH, payload)
+
+    print(f"Wrote {OUT_ROOT.as_posix()} and {OUT_DASH.as_posix()}")
+    print(f"Games output: {payload['summary']['games_count']}")
 
 
 if __name__ == "__main__":
