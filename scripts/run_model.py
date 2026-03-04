@@ -58,9 +58,16 @@ def main() -> None:
         "todays_games": [asdict(g) for g in todays_games],
     }
 
-    Path("output").mkdir(exist_ok=True)
-    Path("output/today_predictions.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
-    print("Wrote output/today_predictions.json")
+# ...
+Path("output").mkdir(exist_ok=True)
+Path("dashboard/output").mkdir(parents=True, exist_ok=True)
+
+payload = json.dumps(out, indent=2)
+
+Path("output/today_predictions.json").write_text(payload, encoding="utf-8")
+Path("dashboard/output/today_predictions.json").write_text(payload, encoding="utf-8")
+
+print("Wrote output/today_predictions.json and dashboard/output/today_predictions.json")
 
 
 if __name__ == "__main__":
