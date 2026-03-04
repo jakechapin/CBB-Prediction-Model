@@ -4,14 +4,14 @@ import json
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional, List
 
 
 @dataclass
 class GamePrediction:
     time_et: str
     matchup: str
-    market_spread: Optional[float]  # DK / consensus; negative = away favored if you format "Away @ Home"
+    market_spread: Optional[float]
     model_spread: Optional[float]
     edge_pts: Optional[float]
     win_prob: Optional[float]       # 0..1
@@ -24,37 +24,36 @@ def utc_now_iso() -> str:
 
 
 def main() -> None:
-    # TODO: Replace this stub list with real data ingestion later.
+    # STUB DATA (for testing the dashboard). We'll replace this with real schedule + odds next.
     todays_games: List[GamePrediction] = [
         GamePrediction(
             time_et="7:00 PM",
-            matchup="Duke @ NC State",
+            matchup="Team A @ Team B",
             market_spread=-3.5,
-            model_spread=-6.0,
-            edge_pts=2.5,
-            win_prob=0.67,
-            confidence=72,
+            model_spread=-5.8,
+            edge_pts=2.3,
+            win_prob=0.66,
+            confidence=73,
             note="Value: model > market"
         ),
         GamePrediction(
-            time_et="8:30 PM",
-            matchup="Providence @ Creighton",
-            market_spread=+7.0,
-            model_spread=+5.0,
-            edge_pts=2.0,
-            win_prob=0.39,
-            confidence=61,
+            time_et="9:00 PM",
+            matchup="Team C @ Team D",
+            market_spread=+6.0,
+            model_spread=+4.2,
+            edge_pts=1.8,
+            win_prob=0.41,
+            confidence=60,
             note="Lean: dog"
         ),
     ]
 
     out = {
         "generated_at": utc_now_iso(),
-        "date_et": "2026-03-04",  # TODO: compute from timezone later
-        "model_version": "v0.1-stub",
+        "model_version": "v0.2-stub-table",
         "summary": {
             "games_count": len(todays_games),
-            "notes": "Stub predictions. Next step: auto-fetch schedule + lines + team ratings."
+            "notes": "Stub predictions to validate dashboard rendering."
         },
         "todays_games": [asdict(g) for g in todays_games],
     }
