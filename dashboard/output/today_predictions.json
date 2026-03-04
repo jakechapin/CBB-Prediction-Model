@@ -1,29 +1,419 @@
 {
-  "generated_at": "2026-03-04T17:29:43.549734Z",
-  "model_version": "v0.3",
+  "generated_at": "2026-03-04T17:57:46.280357Z",
+  "model_version": "v0.4",
   "summary": {
-    "games_count": 2
+    "games_count": 41
   },
   "todays_games": [
     {
+      "time_et": "11:59 AM",
+      "matchup": "Jacksonville Dolphins @ Bellarmine Knights",
+      "market_spread": 11.5,
+      "model_spread": 10.4,
+      "edge_pts": -1.1,
+      "win_prob": 0.25,
+      "confidence": 81,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "2:30 PM",
+      "matchup": "North Alabama Lions @ Florida Gulf Coast Eagles",
+      "market_spread": 8.5,
+      "model_spread": 9.9,
+      "edge_pts": 1.4,
+      "win_prob": 0.25,
+      "confidence": 84,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "5:00 PM",
+      "matchup": "Stetson Hatters @ Eastern Kentucky Colonels",
+      "market_spread": 4.5,
+      "model_spread": 3.2,
+      "edge_pts": -1.3,
+      "win_prob": 0.34,
+      "confidence": 78,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "Creighton Bluejays @ Butler Bulldogs",
+      "market_spread": 2.5,
+      "model_spread": 1.6,
+      "edge_pts": -0.9,
+      "win_prob": 0.42,
+      "confidence": 69,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "Louisiana Ragin' Cajuns @ James Madison Dukes",
+      "market_spread": 6.5,
+      "model_spread": 7.8,
+      "edge_pts": 1.3,
+      "win_prob": 0.25,
+      "confidence": 83,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "6:30 PM",
+      "matchup": "Fordham Rams @ La Salle Explorers",
+      "market_spread": -2.0,
+      "model_spread": -2.4,
+      "edge_pts": -0.4,
+      "win_prob": 0.619,
+      "confidence": 66,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "6:30 PM",
+      "matchup": "Minnesota Golden Gophers @ Indiana Hoosiers",
+      "market_spread": 6.8,
+      "model_spread": 7.7,
+      "edge_pts": 1.0,
+      "win_prob": 0.25,
+      "confidence": 80,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
       "time_et": "7:00 PM",
-      "matchup": "Team A @ Team B",
+      "matchup": "California Golden Bears @ Georgia Tech Yellow Jackets",
       "market_spread": -3.5,
-      "model_spread": -5.8,
-      "edge_pts": 2.3,
-      "win_prob": 0.66,
+      "model_spread": -3.9,
+      "edge_pts": -0.4,
+      "win_prob": 0.693,
+      "confidence": 70,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Wagner Seahawks @ Central Connecticut St Blue Devils",
+      "market_spread": 5.5,
+      "model_spread": 4.3,
+      "edge_pts": -1.2,
+      "win_prob": 0.283,
+      "confidence": 80,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "UAB Blazers @ Charlotte 49ers",
+      "market_spread": -1.5,
+      "model_spread": -1.7,
+      "edge_pts": -0.2,
+      "win_prob": 0.585,
+      "confidence": 62,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Chicago St Cougars @ LIU Sharks",
+      "market_spread": 11.5,
+      "model_spread": 10.9,
+      "edge_pts": -0.6,
+      "win_prob": 0.25,
+      "confidence": 76,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Cleveland St Vikings @ Wright St Raiders",
+      "market_spread": 14.5,
+      "model_spread": 15.2,
+      "edge_pts": 0.7,
+      "win_prob": 0.25,
+      "confidence": 77,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Saint Joseph's Hawks @ Davidson Wildcats",
+      "market_spread": 4.0,
+      "model_spread": 2.9,
+      "edge_pts": -1.1,
+      "win_prob": 0.353,
+      "confidence": 74,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Milwaukee Panthers @ Detroit Mercy Titans",
+      "market_spread": 2.0,
+      "model_spread": 1.7,
+      "edge_pts": -0.3,
+      "win_prob": 0.415,
+      "confidence": 63,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Duquesne Dukes @ Rhode Island Rams",
+      "market_spread": 2.5,
+      "model_spread": 3.6,
+      "edge_pts": 1.1,
+      "win_prob": 0.32,
+      "confidence": 77,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Eastern Illinois Panthers @ SIU-Edwardsville Cougars",
+      "market_spread": 4.5,
+      "model_spread": 4.7,
+      "edge_pts": 0.2,
+      "win_prob": 0.263,
+      "confidence": 72,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Fairleigh Dickinson Knights @ Mercyhurst Lakers",
+      "market_spread": 4.5,
+      "model_spread": 5.1,
+      "edge_pts": 0.6,
+      "win_prob": 0.25,
+      "confidence": 76,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "St. Bonaventure Bonnies @ GW Revolutionaries",
+      "market_spread": 9.5,
+      "model_spread": 9.3,
+      "edge_pts": -0.2,
+      "win_prob": 0.25,
+      "confidence": 72,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Stonehill Skyhawks @ Le Moyne Dolphins",
+      "market_spread": 6.5,
+      "model_spread": 5.1,
+      "edge_pts": -1.4,
+      "win_prob": 0.25,
+      "confidence": 84,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Marquette Golden Eagles @ Providence Friars",
+      "market_spread": 5.0,
+      "model_spread": 5.0,
+      "edge_pts": 0.0,
+      "win_prob": 0.25,
+      "confidence": 70,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Northern Kentucky Norse @ Oakland Golden Grizzlies",
+      "market_spread": 2.5,
+      "model_spread": 2.8,
+      "edge_pts": 0.2,
+      "win_prob": 0.362,
+      "confidence": 66,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Youngstown St Penguins @ Robert Morris Colonials",
+      "market_spread": 4.5,
+      "model_spread": 4.0,
+      "edge_pts": -0.5,
+      "win_prob": 0.299,
+      "confidence": 72,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Texas Longhorns @ Arkansas Razorbacks",
+      "market_spread": 7.2,
+      "model_spread": 7.6,
+      "edge_pts": 0.3,
+      "win_prob": 0.25,
       "confidence": 73,
-      "note": "Model edge"
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Miami Hurricanes @ SMU Mustangs",
+      "market_spread": 1.5,
+      "model_spread": 2.4,
+      "edge_pts": 0.9,
+      "win_prob": 0.379,
+      "confidence": 72,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:30 PM",
+      "matchup": "Gardner-Webb Bulldogs @ South Carolina Upstate Spartans",
+      "market_spread": 11.5,
+      "model_spread": 10.1,
+      "edge_pts": -1.4,
+      "win_prob": 0.25,
+      "confidence": 84,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:30 PM",
+      "matchup": "North Florida Ospreys @ West Georgia Wolves",
+      "market_spread": 3.5,
+      "model_spread": 4.5,
+      "edge_pts": 1.0,
+      "win_prob": 0.277,
+      "confidence": 78,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "7:30 PM",
+      "matchup": "Ohio State Buckeyes @ Penn State Nittany Lions",
+      "market_spread": -7.0,
+      "model_spread": -8.0,
+      "edge_pts": -1.0,
+      "win_prob": 0.75,
+      "confidence": 80,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:00 PM",
+      "matchup": "Villanova Wildcats @ DePaul Blue Demons",
+      "market_spread": -2.5,
+      "model_spread": -2.6,
+      "edge_pts": -0.1,
+      "win_prob": 0.633,
+      "confidence": 64,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:00 PM",
+      "matchup": "Loyola (Chi) Ramblers @ Saint Louis Billikens",
+      "market_spread": 22.5,
+      "model_spread": 22.4,
+      "edge_pts": -0.1,
+      "win_prob": 0.25,
+      "confidence": 71,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:00 PM",
+      "matchup": "Maryland Terrapins @ Wisconsin Badgers",
+      "market_spread": 14.5,
+      "model_spread": 13.8,
+      "edge_pts": -0.7,
+      "win_prob": 0.25,
+      "confidence": 77,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:00 PM",
+      "matchup": "Rice Owls @ North Texas Mean Green",
+      "market_spread": 7.5,
+      "model_spread": 8.0,
+      "edge_pts": 0.5,
+      "win_prob": 0.25,
+      "confidence": 75,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:00 PM",
+      "matchup": "UMKC Kangaroos @ Oral Roberts Golden Eagles",
+      "market_spread": 8.2,
+      "model_spread": 7.5,
+      "edge_pts": -0.7,
+      "win_prob": 0.25,
+      "confidence": 77,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:30 PM",
+      "matchup": "Old Dominion Monarchs @ Georgia Southern Eagles",
+      "market_spread": 2.0,
+      "model_spread": 2.8,
+      "edge_pts": 0.8,
+      "win_prob": 0.36,
+      "confidence": 71,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "8:30 PM",
+      "matchup": "Purdue Boilermakers @ Northwestern Wildcats",
+      "market_spread": -10.5,
+      "model_spread": -10.4,
+      "edge_pts": 0.1,
+      "win_prob": 0.75,
+      "confidence": 71,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
     },
     {
       "time_et": "9:00 PM",
-      "matchup": "Team C @ Team D",
-      "market_spread": 6.0,
-      "model_spread": 4.2,
-      "edge_pts": 1.8,
-      "win_prob": 0.41,
-      "confidence": 60,
-      "note": "Lean dog"
+      "matchup": "Baylor Bears @ Houston Cougars",
+      "market_spread": 15.2,
+      "model_spread": 14.0,
+      "edge_pts": -1.2,
+      "win_prob": 0.25,
+      "confidence": 82,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "9:00 PM",
+      "matchup": "Florida St Seminoles @ Pittsburgh Panthers",
+      "market_spread": -2.5,
+      "model_spread": -2.2,
+      "edge_pts": 0.3,
+      "win_prob": 0.611,
+      "confidence": 65,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "9:00 PM",
+      "matchup": "Stanford Cardinal @ Notre Dame Fighting Irish",
+      "market_spread": -1.2,
+      "model_spread": -2.7,
+      "edge_pts": -1.4,
+      "win_prob": 0.633,
+      "confidence": 77,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "9:30 PM",
+      "matchup": "Arkansas-Little Rock Trojans @ Lindenwood Lions",
+      "market_spread": 2.5,
+      "model_spread": 1.1,
+      "edge_pts": -1.4,
+      "win_prob": 0.443,
+      "confidence": 72,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "10:00 PM",
+      "matchup": "Colorado St Rams @ New Mexico Lobos",
+      "market_spread": 8.5,
+      "model_spread": 8.8,
+      "edge_pts": 0.3,
+      "win_prob": 0.25,
+      "confidence": 73,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "10:30 PM",
+      "matchup": "USC Trojans @ Washington Huskies",
+      "market_spread": 6.2,
+      "model_spread": 6.1,
+      "edge_pts": -0.2,
+      "win_prob": 0.25,
+      "confidence": 72,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
+    },
+    {
+      "time_et": "9:00 PM",
+      "matchup": "Miami (OH) RedHawks @ Ohio Bobcats",
+      "market_spread": -5.5,
+      "model_spread": -4.9,
+      "edge_pts": 0.6,
+      "win_prob": 0.747,
+      "confidence": 75,
+      "note": "Placeholder model (upgrade next: real features + weekly recalibration)"
     }
   ]
 }
