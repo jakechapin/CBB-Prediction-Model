@@ -249,13 +249,14 @@ if not home:
 if not away:
     away = TeamRatings(g.away_team, 100, 100, 69)
 
-        margin_home = project_home_margin(home, away)
-        # Spread is "home line": negative means home favored.
-        model_home_spread = -margin_home
+margin_home = project_home_margin(home, away)
 
-        market = g.market_home_spread
-        edge = None
-        note = ""
+# Spread is "home line": negative means home favored.
+model_home_spread = -margin_home
+
+market = g.market_home_spread
+edge = None
+note = ""
 
         if market is not None:
             # Positive edge means our model makes the home spread "more negative" than market
