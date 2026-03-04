@@ -1,42 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>CBB Model Predictions</title>
-<style>
-body{
-    font-family: Arial;
-    background:#f4f6f8;
-    padding:40px;
-}
-.card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    max-width:600px;
-    box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CBB Prediction Model</title>
+  <style>
+    :root{--bg:#f4f6f8;--card:#fff;--text:#101828;--muted:#667085;--border:#eaecf0;}
+    body{font-family:Arial,system-ui,-apple-system,Segoe UI,Roboto;background:var(--bg);margin:0;padding:28px;color:var(--text)}
+    h1{margin:0 0 10px 0}
+    .sub{color:var(--muted);margin-bottom:18px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;max-width:1100px;box-shadow:0 10px 30px rgba(16,24,40,.06)}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
+    th{color:var(--muted);font-weight:600}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid var(--border);font-size:12px;color:var(--muted)}
+    .pos{color:#067647;font-weight:700}
+    .neg{color:#b42318;font-weight:700}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+    .rownote{color:var(--muted);font-size:12px;margin-top:4px}
+  </style>
 </head>
-
 <body>
+  <h1>CBB Prediction Model</h1>
+  <div class="sub" id="meta">Loading…</div>
 
-<h1>CBB Prediction Model</h1>
+  <div class="card">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>Time (ET)</th>
+          <th>Matchup</th>
+          <th>Market</th>
+          <th>Model</th>
+          <th>Edge</th>
+          <th>Win %</th>
+          <th>Conf</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody id="body">
+        <tr><td colspan="8">Loading predictions…</td></tr>
+      </tbody>
+    </table>
+  </div>
 
-<div class="card">
-    <pre id="data">Loading predictions...</pre>
-</div>
+  <script>
+    function fmtNum(x){
+      if (x === null || x === undefined) return "—";
+      const n = Number(x);
+      if (Number.isNaN(n)) return "—";
+      return (n > 0 ? "+" : "") + n.toFixed(1);
+    }
+    function fmtPct(p){
+      if (p === null || p === undefined) return "—";
+      const n = Number(p);
+      if (Number.isNaN(n)) return "—";
+      return Math.round(n * 100) + "%";
+    }
+    function edgeClass(e){
+      if (e === null || e === undefined) return "";
+      const n = Number(e);
+      if (Number.isNaN(n)) return "";
+      return n >= 0 ? "pos" : "neg";
+    }
 
-<script>
+    fetch("/output/today_predictions.json", { cache: "no-store" })
+      .then(r => r.json())
+      .then(data => {
+        const meta = document.getElementById("meta");
+        meta.innerHTML = `
+          <span class="pill">Model: <span class="mono">${data.model_version ?? "—"}</span></span>
+          &nbsp; <span class="pill">Generated: <span class="mono">${data.generated_at ?? "—"}</span></span>
+          &nbsp; <span class="pill">Games: <span class="mono">${data.summary?.games_count ?? (data.todays_games?.length ?? 0)}</span></span>
+        `;
 
-fetch("../output/today_predictions.json")
-.then(r => r.json())
-.then(data => {
-    document.getElementById("data").textContent =
-        JSON.stringify(data, null, 2);
-})
+        const body = document.getElementById("body");
+        const games = data.todays_games || [];
+        if (!games.length){
+          body.innerHTML = `<tr><td colspan="8">No games in todays_games.</td></tr>`;
+          return;
+        }
 
-</script>
-
+        body.innerHTML = games.map(g => `
+          <tr>
+            <td>${g.time_et ?? "—"}</td>
+            <td>
+              <div><b>${g.matchup ?? "—"}</b></div>
+              ${g.note ? `<div class="rownote">${g.note}</div>` : ``}
+            </td>
+            <td>${fmtNum(g.market_spread)}</td>
+            <td>${fmtNum(g.model_spread)}</td>
+            <td class="${edgeClass(g.edge_pts)}">${fmtNum(g.edge_pts)}</td>
+            <td>${fmtPct(g.win_prob)}</td>
+            <td>${g.confidence ?? "—"}</td>
+            <td>${g.note ? "" : "—"}</td>
+          </tr>
+        `).join("");
+      })
+      .catch(err => {
+        document.getElementById("body").innerHTML =
+          `<tr><td colspan="8">Error loading predictions: ${String(err)}</td></tr>`;
+      });
+  </script>
 </body>
 </html>
