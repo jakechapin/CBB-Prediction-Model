@@ -1,3 +1,9 @@
+# scripts/run_model.py
+# Generates output/today_predictions.json for the dashboard.
+# Uses optional:
+# - ODDS_API_KEY (TheOddsAPI) to pull today's NCAAB slate + spreads
+# - data/efficiency.csv for KenPom-style efficiency ratings
+
 from __future__ import annotations
 
 import csv
@@ -5,29 +11,36 @@ import json
 import math
 import os
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-
-import requests
+from typing import Dict, List, Optional, Tuple
+from urllib.error import URLError, HTTPError
+from urllib.request import urlopen, Request
 
 
 # ----------------------------
 # Config
 # ----------------------------
-SPORT_KEY = "basketball_ncaab"
-ODDS_API_BASE = "https://api.the-odds-api.com/v4"
+MODEL_VERSION = "v0.5-eff"
+HOME_COURT_ADV = 3.0  # points (simple default)
+DEFAULT_ADJ_O = 100.0
+DEFAULT_ADJ_D = 100.0
+DEFAULT_TEMPO = 69.0
 
-# Output locations (keep both so Vercel/GitHub Pages setups work either way)
-OUT_ROOT = Path("output") / "today_predictions.json"
-OUT_DASH = Path("dashboard") / "output" / "today_predictions.json"
+# Odds API (TheOddsAPI) - free tier works
+ODDS_API_KEY = os.getenv("ODDS_API_KEY", "").strip()
+ODDS_API_URL = (
+    "https://api.the-odds-api.com/v4/sports/basketball_ncaab/odds/"
+    "?regions=us&markets=spreads&oddsFormat=american&bookmakers="
+    "draftkings,fanduel,betmgm,pointsbetus,caesars"
+    "&apiKey={api_key}"
+)
 
-RATINGS_PATH = Path("data") / "efficiency.csv"
-
-# Model knobs
-BASE_EFF = 100.0          # baseline points/100
-HOME_ADV_PTS = 2.2        # approx home advantage in points
-MARGIN_STD = 11.0         # std dev for margin -> win prob
+# Files
+EFFICIENCY_CSV = Path("data/efficiency.csv")
+OUT_DIR = Path("output")
+OUT_FILE = OUT_DIR / "today_predictions.json"
+DASHBOARD_OUT_FILE = Path("dashboard/output/today_predictions.json")  # optional mirror
 
 
 # ----------------------------
@@ -36,289 +49,302 @@ MARGIN_STD = 11.0         # std dev for margin -> win prob
 @dataclass(frozen=True)
 class TeamRatings:
     team: str
-    adj_o: float
-    adj_d: float
-    tempo: float
+    adj_o: float  # adjusted offensive efficiency (pts/100)
+    adj_d: float  # adjusted defensive efficiency (pts/100)
+    tempo: float  # possessions per 40
 
 
-@dataclass
+@dataclass(frozen=True)
 class Game:
-    commence_time: str
     home_team: str
     away_team: str
-    market_home_spread: Optional[float]  # spread from API (home line)
-    sportsbook: Optional[str]
+    start_utc: datetime
+    market_home_spread: Optional[float]  # home team's spread line (e.g., -3.5)
+    book: str = ""
 
 
 # ----------------------------
 # Helpers
 # ----------------------------
-def utc_now_iso() -> str:
+def now_utc_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
-def norm_cdf(x: float) -> float:
-    # Standard normal CDF via erf
-    return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+def safe_float(x, default=None):
+    try:
+        return float(x)
+    except Exception:
+        return default
 
 
-def win_prob_from_margin(margin_pts_for_home: float, std: float = MARGIN_STD) -> float:
-    # P(home wins) assuming margin ~ Normal(mean=margin, std=std)
-    return norm_cdf(margin_pts_for_home / std)
+def normalize_team_name(name: str) -> str:
+    # Light normalization to improve joins across sources
+    return " ".join(name.replace("\u00a0", " ").split()).strip()
 
 
-def clamp(n: float, lo: float, hi: float) -> float:
-    return max(lo, min(hi, n))
-
-
-def load_ratings(path: Path) -> Dict[str, TeamRatings]:
-    if not path.exists():
-        raise FileNotFoundError(f"Missing ratings file: {path.as_posix()}")
-
+def load_efficiency_ratings(path: Path) -> Dict[str, TeamRatings]:
+    """
+    Expected columns (case-insensitive, flexible):
+      team, adj_o, adj_d, tempo
+    You can also use: offense, defense, adj_off, adj_def, pace, poss40, etc.
+    """
     ratings: Dict[str, TeamRatings] = {}
-    with path.open("r", newline="", encoding="utf-8") as f:
+    if not path.exists():
+        return ratings
+
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
-        required = {"team", "adj_o", "adj_d", "tempo"}
-        if not required.issubset(set(reader.fieldnames or [])):
-            raise ValueError(f"{path.as_posix()} must have columns: team, adj_o, adj_d, tempo")
+        if not reader.fieldnames:
+            return ratings
+
+        # map headers
+        headers = {h.lower().strip(): h for h in reader.fieldnames}
+
+        def pick(*candidates: str) -> Optional[str]:
+            for c in candidates:
+                if c in headers:
+                    return headers[c]
+            return None
+
+        team_col = pick("team", "school", "name")
+        o_col = pick("adj_o", "adjo", "offense", "adj_off", "adjoff", "o")
+        d_col = pick("adj_d", "adjd", "defense", "adj_def", "adjdef", "d")
+        t_col = pick("tempo", "pace", "poss40", "possessions", "t")
+
+        if not team_col or not o_col or not d_col:
+            # Not enough info to use
+            return ratings
 
         for row in reader:
-            team = (row["team"] or "").strip()
+            team_raw = row.get(team_col, "") or ""
+            team = normalize_team_name(team_raw)
             if not team:
                 continue
-            ratings[team.lower()] = TeamRatings(
-                team=team,
-                adj_o=float(row["adj_o"]),
-                adj_d=float(row["adj_d"]),
-                tempo=float(row["tempo"]),
-            )
+
+            adj_o = safe_float(row.get(o_col, ""), DEFAULT_ADJ_O)
+            adj_d = safe_float(row.get(d_col, ""), DEFAULT_ADJ_D)
+            tempo = safe_float(row.get(t_col, ""), DEFAULT_TEMPO) if t_col else DEFAULT_TEMPO
+
+            ratings[team.lower()] = TeamRatings(team=team, adj_o=adj_o, adj_d=adj_d, tempo=tempo)
+
     return ratings
 
 
-def pick_best_spread(bookmakers: List[Dict[str, Any]]) -> Tuple[Optional[float], Optional[str]]:
-    """
-    Returns (home_spread, sportsbook).
-    Uses the first available spread market; prefers FanDuel/DK/BetMGM if present.
-    """
-    preferred = ["fanduel", "draftkings", "betmgm", "pointsbetus", "caesars", "betrivers"]
+def find_team(ratings: Dict[str, TeamRatings], team_name: str) -> Optional[TeamRatings]:
+    key = normalize_team_name(team_name).lower()
+    if key in ratings:
+        return ratings[key]
 
-    def market_home_spread_from_bm(bm: Dict[str, Any]) -> Optional[float]:
-        markets = bm.get("markets") or []
-        for m in markets:
-            if m.get("key") != "spreads":
-                continue
-            outcomes = m.get("outcomes") or []
-            # For spreads market, outcomes include home & away with "point"
-            # We want the HOME team's point.
-            for o in outcomes:
-                if "name" in o and "point" in o:
-                    # We'll match later after we know home team name; so return dict-like? nope.
-                    pass
-        return None
-
-    # We'll just scan and return first BM that contains spreads;
-    # later, we compute actual home spread by matching outcome "name" to home team.
-    for key in preferred:
-        for bm in bookmakers:
-            if bm.get("key") == key:
-                return None, key  # signal preferred found; spread extracted later
-    # fallback: any bookmaker
-    if bookmakers:
-        return None, bookmakers[0].get("key")
-    return None, None
-
-
-def extract_home_spread(bookmakers: List[Dict[str, Any]], home_team: str) -> Tuple[Optional[float], Optional[str]]:
-    # Try preferred order, then any
-    preferred = ["fanduel", "draftkings", "betmgm", "pointsbetus", "caesars", "betrivers"]
-
-    def try_bm(bm: Dict[str, Any]) -> Optional[float]:
-        markets = bm.get("markets") or []
-        for m in markets:
-            if m.get("key") != "spreads":
-                continue
-            outcomes = m.get("outcomes") or []
-            for o in outcomes:
-                if (o.get("name") or "").strip().lower() == home_team.strip().lower():
-                    pt = o.get("point", None)
-                    if pt is None:
-                        return None
-                    return float(pt)
-        return None
-
-    # preferred pass
-    for key in preferred:
-        for bm in bookmakers:
-            if bm.get("key") == key:
-                sp = try_bm(bm)
-                if sp is not None:
-                    return sp, key
-
-    # any pass
-    for bm in bookmakers:
-        sp = try_bm(bm)
-        if sp is not None:
-            return sp, bm.get("key")
-
-    return None, None
-
-
-def fetch_odds_games() -> List[Game]:
-    api_key = os.environ.get("ODDS_API_KEY", "").strip()
-    if not api_key:
-        raise RuntimeError("Missing ODDS_API_KEY env var (add it as a GitHub Actions secret).")
-
-    url = f"{ODDS_API_BASE}/sports/{SPORT_KEY}/odds"
-    params = {
-        "apiKey": api_key,
-        "regions": "us",
-        "markets": "spreads",
-        "oddsFormat": "american",
-        "dateFormat": "iso",
-    }
-
-    res = requests.get(url, params=params, timeout=30)
-    if res.status_code != 200:
-        raise RuntimeError(f"Odds API error {res.status_code}: {res.text[:300]}")
-
-    data = res.json()
-    games: List[Game] = []
-
-    for g in data:
-        home = g.get("home_team")
-        away = g.get("away_team")
-        commence = g.get("commence_time") or ""
-        bookmakers = g.get("bookmakers") or []
-
-        market_spread, book = extract_home_spread(bookmakers, home)
-
-        games.append(
-            Game(
-                commence_time=commence,
-                home_team=home,
-                away_team=away,
-                market_home_spread=market_spread,
-                sportsbook=book,
-            )
-        )
-
-    return games
+    # fallback: try looser match (contains)
+    for k, v in ratings.items():
+        if k == key:
+            return v
+    return None
 
 
 def project_home_margin(home: TeamRatings, away: TeamRatings) -> float:
     """
-    KenPom-style: expected points/100 for each side based on offense vs opponent defense.
-    Using multiplicative interaction around BASE_EFF:
-      home_pp100 = home_adjO * (away_adjD / BASE_EFF)
-      away_pp100 = away_adjO * (home_adjD / BASE_EFF)
-
-    Then scale by possessions (tempo average / 100).
+    KenPom-style margin estimate (very simplified):
+      AdjEM = AdjO - AdjD
+      margin ≈ (AdjEM_home - AdjEM_away) + HCA
     """
-    poss = (home.tempo + away.tempo) / 2.0
-
-    home_pp100 = home.adj_o * (away.adj_d / BASE_EFF)
-    away_pp100 = away.adj_o * (home.adj_d / BASE_EFF)
-
-    margin = (home_pp100 - away_pp100) * (poss / 100.0)
-    margin += HOME_ADV_PTS
-    return margin
+    home_em = home.adj_o - home.adj_d
+    away_em = away.adj_o - away.adj_d
+    return (home_em - away_em) + HOME_COURT_ADV
 
 
-def time_et_label(iso_time: str) -> str:
-    # Keep it simple: show ISO time if parsing fails.
-    # (If you want perfect ET conversion, we can add zoneinfo next.)
+def margin_to_win_prob(margin_home: float) -> float:
+    """
+    Convert point margin to win probability using logistic curve.
+    Scale tuned so ~7 pts ≈ strong favorite.
+    """
+    scale = 7.0
+    p = 1.0 / (1.0 + math.exp(-margin_home / scale))
+    return max(0.01, min(0.99, p))
+
+
+def confidence_from_edge(edge_pts: Optional[float], win_prob: float) -> int:
+    """
+    0-100 style confidence
+    """
+    base = abs((win_prob - 0.5) * 200)  # 0..100
+    if edge_pts is None:
+        conf = base * 0.7
+    else:
+        conf = min(100.0, base + min(35.0, abs(edge_pts) * 6.0))
+    return int(round(max(1.0, min(99.0, conf))))
+
+
+def format_time_et(dt_utc: datetime) -> str:
+    # Rough ET display without external deps (DST accuracy not critical for MVP).
+    # If you want perfect ET, we can switch to zoneinfo (standard lib) next.
+    dt = dt_utc.astimezone(timezone(timedelta(hours=-5)))  # EST baseline
+    return dt.strftime("%-I:%M %p") if hasattr(dt, "strftime") else dt.isoformat()
+
+
+def fetch_odds_games() -> List[Game]:
+    if not ODDS_API_KEY:
+        return []
+
+    url = ODDS_API_URL.format(api_key=ODDS_API_KEY)
+    req = Request(url, headers={"User-Agent": "cbb-model/1.0"})
     try:
-        dt = datetime.fromisoformat(iso_time.replace("Z", "+00:00"))
-        # Display as local string; GitHub runner is UTC, but dashboard is fine with a label.
-        # We'll just show HH:MM (ET) is handled later if you want.
-        return dt.strftime("%I:%M %p").lstrip("0")
-    except Exception:
-        return "—"
+        with urlopen(req, timeout=30) as r:
+            data = json.loads(r.read().decode("utf-8"))
+    except (HTTPError, URLError, TimeoutError, json.JSONDecodeError) as e:
+        print(f"[warn] Odds API fetch failed: {e}")
+        return []
+
+    games: List[Game] = []
+    now = datetime.now(timezone.utc)
+    horizon = now + timedelta(hours=36)
+
+    for ev in data:
+        try:
+            home_team = normalize_team_name(ev.get("home_team", ""))
+            away_team = normalize_team_name(ev.get("away_team", ""))
+            if not home_team or not away_team:
+                continue
+
+            commence = ev.get("commence_time")
+            if not commence:
+                continue
+
+            # ISO timestamps from API (Z)
+            start_utc = datetime.fromisoformat(commence.replace("Z", "+00:00"))
+            if start_utc < now - timedelta(hours=3) or start_utc > horizon:
+                # keep it "today-ish"
+                continue
+
+            market_home_spread = None
+            book_name = ""
+
+            # Prefer a bookmaker with spreads
+            for book in ev.get("bookmakers", []) or []:
+                btitle = book.get("title", "") or ""
+                for m in book.get("markets", []) or []:
+                    if (m.get("key") or "") != "spreads":
+                        continue
+                    outcomes = m.get("outcomes", []) or []
+                    # Each outcome has: name (team), point (spread), price (odds)
+                    for o in outcomes:
+                        if normalize_team_name(o.get("name", "")) == home_team:
+                            market_home_spread = safe_float(o.get("point", None), None)
+                            book_name = btitle
+                            break
+                    if market_home_spread is not None:
+                        break
+                if market_home_spread is not None:
+                    break
+
+            games.append(
+                Game(
+                    home_team=home_team,
+                    away_team=away_team,
+                    start_utc=start_utc,
+                    market_home_spread=market_home_spread,
+                    book=book_name,
+                )
+            )
+        except Exception:
+            continue
+
+    # sort by start time
+    games.sort(key=lambda g: g.start_utc)
+    return games
 
 
-def build_predictions(games: List[Game], ratings: Dict[str, TeamRatings]) -> Dict[str, Any]:
-    rows = []
+def fallback_sample_games() -> List[Game]:
+    # If ODDS_API_KEY isn't set yet, keep dashboard alive with sample entries
+    now = datetime.now(timezone.utc)
+    return [
+        Game("Team A", "Team B", now + timedelta(hours=6), -3.5, "sample"),
+        Game("Team C", "Team D", now + timedelta(hours=8), +6.0, "sample"),
+    ]
 
-    home = ratings.get(g.home_team.lower())
-away = ratings.get(g.away_team.lower())
 
-# fallback ratings if team missing
-if not home:
-    home = TeamRatings(g.home_team, 100, 100, 69)
+# ----------------------------
+# Main
+# ----------------------------
+def main() -> None:
+    ratings = load_efficiency_ratings(EFFICIENCY_CSV)
+    if ratings:
+        print(f"Loaded efficiency ratings: {len(ratings)} teams")
+    else:
+        print("No efficiency ratings found (data/efficiency.csv). Using defaults.")
 
-if not away:
-    away = TeamRatings(g.away_team, 100, 100, 69)
+    games = fetch_odds_games()
+    if not games:
+        print("No games fetched from Odds API. Using fallback sample games.")
+        games = fallback_sample_games()
 
-margin_home = project_home_margin(home, away)
+    todays: List[dict] = []
 
-# Spread is "home line": negative means home favored.
-model_home_spread = -margin_home
+    for g in games:
+        home = find_team(ratings, g.home_team)
+        away = find_team(ratings, g.away_team)
 
-market = g.market_home_spread
-edge = None
-note = ""
+        # fallback ratings if team missing
+        if not home:
+            home = TeamRatings(g.home_team, DEFAULT_ADJ_O, DEFAULT_ADJ_D, DEFAULT_TEMPO)
+        if not away:
+            away = TeamRatings(g.away_team, DEFAULT_ADJ_O, DEFAULT_ADJ_D, DEFAULT_TEMPO)
 
+        margin_home = project_home_margin(home, away)
+
+        # Spread is "home line": negative means home favored.
+        model_home_spread = -margin_home
+
+        market = g.market_home_spread
+        edge = None
+        note = ""
         if market is not None:
-            # Positive edge means our model makes the home spread "more negative" than market
-            # Example: market -2.5, model -5.0 => edge = (+2.5) (value on home -2.5)
+            # Positive edge means model favors home more than market (i.e., model line more negative)
             edge = market - model_home_spread
-
-            if edge >= 1.5:
-                note = "Home value"
-            elif edge <= -1.5:
-                note = "Away value"
+            if abs(edge) >= 2.0:
+                note = "Model edge"
+            elif abs(edge) >= 1.0:
+                note = "Lean"
             else:
-                note = "Small edge"
-        else:
-            note = "No market line"
+                note = ""
 
-        wp_home = win_prob_from_margin(margin_home)
-        # Confidence: scale with edge magnitude if market exists; else neutral-ish
-        conf = 60
-        if edge is not None:
-            conf = int(clamp(55 + abs(edge) * 6, 55, 90))
+        win_prob = margin_to_win_prob(margin_home)
+        conf = confidence_from_edge(edge, win_prob)
 
-        rows.append(
+        matchup = f"{away.team} @ {home.team}"
+
+        todays.append(
             {
-                "time_et": time_et_label(g.commence_time),
-                "matchup": f"{g.away_team} @ {g.home_team}",
+                "time_et": format_time_et(g.start_utc),
+                "matchup": matchup,
                 "market_spread": market,
                 "model_spread": round(model_home_spread, 1),
                 "edge_pts": round(edge, 1) if edge is not None else None,
-                "win_prob": round(wp_home, 3),
+                "win_prob": round(win_prob, 2),
                 "confidence": conf,
-                "note": note,
-                "market_source": (g.sportsbook or "").lower() + " spread" if g.sportsbook else "",
+                "note": note if note else (g.book + " spread" if g.book else ""),
+                "book": g.book,
             }
         )
 
-    # Sort: biggest absolute edge first, then confidence
-    rows.sort(key=lambda r: (abs(r["edge_pts"] or 0), r["confidence"]), reverse=True)
-
-    payload = {
-        "generated_at": utc_now_iso(),
-        "model_version": "v0.5-eff",
-        "summary": {"games_count": len(rows)},
-        "todays_games": rows,
+    out = {
+        "generated_at": now_utc_iso(),
+        "model_version": MODEL_VERSION,
+        "summary": {"games_count": len(todays)},
+        "todays_games": todays,
     }
-    return payload
 
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    OUT_FILE.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    print(f"Wrote {OUT_FILE}")
 
-def write_json(path: Path, obj: Dict[str, Any]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-
-
-def main() -> None:
-    ratings = load_ratings(RATINGS_PATH)
-    games = fetch_odds_games()
-    payload = build_predictions(games, ratings)
-
-    write_json(OUT_ROOT, payload)
-    write_json(OUT_DASH, payload)
-
-    print(f"Wrote {OUT_ROOT.as_posix()} and {OUT_DASH.as_posix()}")
-    print(f"Games output: {payload['summary']['games_count']}")
+    # Optional mirror into dashboard folder if you ever fetch locally there
+    try:
+        DASHBOARD_OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+        DASHBOARD_OUT_FILE.write_text(json.dumps(out, indent=2), encoding="utf-8")
+        print(f"Wrote {DASHBOARD_OUT_FILE}")
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":
