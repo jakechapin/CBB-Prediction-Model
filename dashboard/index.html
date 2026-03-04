@@ -2763,5 +2763,51 @@ function importData(event) {
 })();
 
 </script>
+<script>
+async function loadGames() {
+
+  const res = await fetch("/output/today_predictions.json");
+  const data = await res.json();
+
+  const container = document.getElementById("games-container");
+  container.innerHTML = "";
+
+  data.todays_games.forEach(game => {
+
+    const edge = game.edge_pts ?? 0;
+
+    const card = document.createElement("div");
+    card.className = "game-card";
+
+    card.innerHTML = `
+      <div class="matchup">
+        ${game.matchup}
+      </div>
+
+      <div class="game-meta">
+        Market: ${game.market_spread ?? "-"}  
+        Model: ${game.model_spread}
+      </div>
+
+      <div class="edge">
+        Edge: ${edge > 0 ? "+" : ""}${edge}
+      </div>
+
+      <div class="win">
+        Win Probability: ${Math.round(game.win_prob * 100)}%
+      </div>
+
+      <div class="confidence">
+        Confidence: ${game.confidence}
+      </div>
+    `;
+
+    container.appendChild(card);
+
+  });
+}
+
+loadGames();
+</script>
 </body>
 </html>
