@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CBB Model Predictions</title>
+<style>
+body{
+    font-family: Arial;
+    background:#f4f6f8;
+    padding:40px;
+}
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    max-width:600px;
+    box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+</style>
+</head>
+
+<body>
+
+<h1>CBB Prediction Model</h1>
+
+<div class="card">
+    <pre id="data">Loading predictions...</pre>
+</div>
+
+<script>
+
+fetch("../output/today_predictions.json")
+.then(r => r.json())
+.then(data => {
+    document.getElementById("data").textContent =
+        JSON.stringify(data, null, 2);
+})
+
+</script>
+
+</body>
+</html>
