@@ -239,12 +239,15 @@ def time_et_label(iso_time: str) -> str:
 def build_predictions(games: List[Game], ratings: Dict[str, TeamRatings]) -> Dict[str, Any]:
     rows = []
 
-    for g in games:
-        home = ratings.get(g.home_team.lower())
-        away = ratings.get(g.away_team.lower())
-        if not home or not away:
-            # skip if we don't have ratings yet
-            continue
+    home = ratings.get(g.home_team.lower())
+away = ratings.get(g.away_team.lower())
+
+# fallback ratings if team missing
+if not home:
+    home = TeamRatings(g.home_team, 100, 100, 69)
+
+if not away:
+    away = TeamRatings(g.away_team, 100, 100, 69)
 
         margin_home = project_home_margin(home, away)
         # Spread is "home line": negative means home favored.
