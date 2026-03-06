@@ -464,12 +464,11 @@
     setStatus("Loading latest data…");
 
     // cache-bust so Vercel doesn’t serve old JSON
-    const url = `${DATA_URL}?v=${Date.now()}`;
+    const url = "/output/today_predictions.json?v=" + Date.now();
 
-    try{
-      const res = await fetch(url, { cache: "no-store" });
-      if (!res.ok) throw new Error(`Fetch failed (${res.status})`);
-      const data = await res.json();
+    try{const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error(`Fetch failed (${res.status})`);
+    const data = await res.json();
 
       const rows = Array.isArray(data.todays_games) ? data.todays_games : [];
       state.rows = rows;
