@@ -130,10 +130,24 @@ def load_efficiency_ratings(path: Path) -> Dict[str, TeamRatings]:
     return ratings
 
 
-def find_team(ratings: Dict[str, TeamRatings], team_name: str) -> Optional[TeamRatings]:
-    key = normalize_team_name(team_name).lower()
-    if key in ratings:
-        return ratings[key]
+def project_home_margin(home, away):
+    tempo = (home.tempo + away.tempo) / 2
+
+    home_ppp = home.off_eff / 100
+    away_ppp = away.off_eff / 100
+
+    home_def = home.def_eff / 100
+    away_def = away.def_eff / 100
+
+    home_score = home_ppp * away_def * tempo
+    away_score = away_ppp * home_def * tempo
+
+    margin = home_score - away_score
+
+    HOME_COURT = 3.2
+    margin += HOME_COURT
+
+    return margin
 
     # fallback: try looser match (contains)
     for k, v in ratings.items():
