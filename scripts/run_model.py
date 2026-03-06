@@ -158,12 +158,14 @@ def project_home_margin(home, away):
 
 def project_home_margin(home: TeamRatings, away: TeamRatings) -> float:
     """
-    KenPom-style margin estimate (very simplified):
-      AdjEM = AdjO - AdjD
-      margin ≈ (AdjEM_home - AdjEM_away) + HCA
+    KenPom-style margin estimate:
+      home margin = (home AdjEM - away AdjEM) + home court
+      where AdjEM = AdjO - AdjD
     """
     home_em = home.adj_o - home.adj_d
     away_em = away.adj_o - away.adj_d
+
+    HOME_COURT_ADV = 3.2
     return (home_em - away_em) + HOME_COURT_ADV
 
 
@@ -300,9 +302,10 @@ def main() -> None:
 
         # fallback ratings if team missing
         if not home:
-            home = TeamRatings(g.home_team, DEFAULT_ADJ_O, DEFAULT_ADJ_D, DEFAULT_TEMPO)
+        home = TeamRatings(g.home_team, 100, 100, 69)
+
         if not away:
-            away = TeamRatings(g.away_team, DEFAULT_ADJ_O, DEFAULT_ADJ_D, DEFAULT_TEMPO)
+        away = TeamRatings(g.away_team, 100, 100, 69)
 
         margin_home = project_home_margin(home, away)
 
