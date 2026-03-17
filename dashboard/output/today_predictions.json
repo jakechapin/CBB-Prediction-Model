@@ -1,20 +1,141 @@
 {
-  "generated_at": "2026-03-16T12:02:21.126626Z",
+  "generated_at": "2026-03-17T11:58:42.197723Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 1
+    "games_count": 12
   },
   "todays_games": [
     {
+      "time_et": "5:00 PM",
+      "matchup": "Liberty Flames @ George Mason Patriots",
+      "market_spread": -5.5,
+      "model_spread": -5.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
       "time_et": "5:40 PM",
       "matchup": "UMBC Retrievers @ Howard Bison",
-      "market_spread": 2.5,
-      "model_spread": 2.5,
+      "market_spread": 1.5,
+      "model_spread": 1.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
       "book": "DraftKings"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "UNC Wilmington Seahawks @ Yale Bulldogs",
+      "market_spread": -4.5,
+      "model_spread": -4.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "Wyoming Cowboys @ Wichita St Shockers",
+      "market_spread": -6.5,
+      "model_spread": -6.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "7:00 PM",
+      "matchup": "Davidson Wildcats @ Oklahoma St Cowboys",
+      "market_spread": -8.5,
+      "model_spread": -8.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "8:00 PM",
+      "matchup": "Stephen F. Austin Lumberjacks @ Tulsa Golden Hurricane",
+      "market_spread": -7.5,
+      "model_spread": -7.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "8:15 PM",
+      "matchup": "NC State Wolfpack @ Texas Longhorns",
+      "market_spread": -1.5,
+      "model_spread": -1.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "9:00 PM",
+      "matchup": "South Alabama Jaguars @ Auburn Tigers",
+      "market_spread": -17.5,
+      "model_spread": -17.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "9:00 PM",
+      "matchup": "St. Thomas (MN) Tommies @ Seattle Redhawks",
+      "market_spread": -2.5,
+      "model_spread": -2.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "10:00 PM",
+      "matchup": "UNLV Rebels @ UC Irvine Anteaters",
+      "market_spread": -2.5,
+      "model_spread": -2.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "5:40 PM",
+      "matchup": "Prairie View Panthers @ Lehigh Mountain Hawks",
+      "market_spread": -3.5,
+      "model_spread": -3.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "Navy Midshipmen @ Wake Forest Demon Deacons",
+      "market_spread": -11.5,
+      "model_spread": -11.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
     }
   ]
 }
