@@ -1,191 +1,15 @@
 {
-  "generated_at": "2026-03-19T11:52:33.574192Z",
+  "generated_at": "2026-03-20T11:45:30.217848Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 28
+    "games_count": 22
   },
   "todays_games": [
     {
       "time_et": "11:15 AM",
-      "matchup": "TCU Horned Frogs @ Ohio State Buckeyes",
-      "market_spread": -2.5,
-      "model_spread": -2.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "11:40 AM",
-      "matchup": "Troy Trojans @ Nebraska Cornhuskers",
-      "market_spread": -13.5,
-      "model_spread": -13.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "12:30 PM",
-      "matchup": "South Florida Bulls @ Louisville Cardinals",
-      "market_spread": -4.5,
-      "model_spread": -4.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "12:50 PM",
-      "matchup": "High Point Panthers @ Wisconsin Badgers",
-      "market_spread": -10.5,
-      "model_spread": -10.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "1:50 PM",
-      "matchup": "Siena Saints @ Duke Blue Devils",
-      "market_spread": -27.5,
-      "model_spread": -27.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "2:15 PM",
-      "matchup": "McNeese Cowboys @ Vanderbilt Commodores",
-      "market_spread": -12.5,
-      "model_spread": -12.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "3:05 PM",
-      "matchup": "North Dakota St Bison @ Michigan St Spartans",
-      "market_spread": -15.5,
-      "model_spread": -15.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "3:25 PM",
-      "matchup": "Hawai'i Rainbow Warriors @ Arkansas Razorbacks",
-      "market_spread": -15.5,
-      "model_spread": -15.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "5:50 PM",
-      "matchup": "VCU Rams @ North Carolina Tar Heels",
-      "market_spread": -2.5,
-      "model_spread": -2.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "6:10 PM",
-      "matchup": "Howard Bison @ Michigan Wolverines",
-      "market_spread": -31.5,
-      "model_spread": -31.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "6:25 PM",
-      "matchup": "Texas Longhorns @ BYU Cougars",
-      "market_spread": -2.5,
-      "model_spread": -2.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "6:35 PM",
-      "matchup": "Texas A&M Aggies @ Saint Mary's Gaels",
-      "market_spread": -3.5,
-      "model_spread": -3.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "8:25 PM",
-      "matchup": "Pennsylvania Quakers @ Illinois Fighting Illini",
-      "market_spread": -25.5,
-      "model_spread": -25.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "8:45 PM",
-      "matchup": "Saint Louis Billikens @ Georgia Bulldogs",
-      "market_spread": -2.5,
-      "model_spread": -2.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "9:00 PM",
-      "matchup": "Kennesaw St Owls @ Gonzaga Bulldogs",
-      "market_spread": -21.5,
-      "model_spread": -21.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "9:10 PM",
-      "matchup": "Idaho Vandals @ Houston Cougars",
-      "market_spread": -23.5,
-      "model_spread": -23.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "11:15 AM",
       "matchup": "Santa Clara Broncos @ Kentucky Wildcats",
-      "market_spread": -3.5,
-      "model_spread": -3.5,
+      "market_spread": -2.5,
+      "model_spread": -2.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
@@ -261,8 +85,8 @@
     {
       "time_et": "3:25 PM",
       "matchup": "Miami (OH) RedHawks @ Tennessee Volunteers",
-      "market_spread": -11.5,
-      "model_spread": -11.5,
+      "market_spread": -10.5,
+      "model_spread": -10.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
@@ -312,6 +136,116 @@
       "confidence": 0,
       "note": "Missing ratings",
       "book": "FanDuel"
+    },
+    {
+      "time_et": "8:25 PM",
+      "matchup": "Prairie View Panthers @ Florida Gators",
+      "market_spread": -35.5,
+      "model_spread": -35.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "8:45 PM",
+      "matchup": "Cal Baptist Lancers @ Kansas Jayhawks",
+      "market_spread": -14.5,
+      "model_spread": -14.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "9:00 PM",
+      "matchup": "Furman Paladins @ UConn Huskies",
+      "market_spread": -20.5,
+      "model_spread": -20.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "9:10 PM",
+      "matchup": "Missouri Tigers @ Miami Hurricanes",
+      "market_spread": -1.5,
+      "model_spread": -1.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "11:10 AM",
+      "matchup": "Saint Louis Billikens @ Michigan Wolverines",
+      "market_spread": -12.5,
+      "model_spread": -12.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "1:45 PM",
+      "matchup": "Louisville Cardinals @ Michigan St Spartans",
+      "market_spread": -4.5,
+      "model_spread": -4.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "4:15 PM",
+      "matchup": "TCU Horned Frogs @ Duke Blue Devils",
+      "market_spread": -11.5,
+      "model_spread": -11.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "5:10 PM",
+      "matchup": "Texas A&M Aggies @ Houston Cougars",
+      "market_spread": -9.5,
+      "model_spread": -9.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "Dayton Flyers @ UNC Wilmington Seahawks",
+      "market_spread": 2.5,
+      "model_spread": 2.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "6:10 PM",
+      "matchup": "Texas Longhorns @ Gonzaga Bulldogs",
+      "market_spread": -5.5,
+      "model_spread": -5.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
     }
   ]
 }
