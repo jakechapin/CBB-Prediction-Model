@@ -1,163 +1,31 @@
 {
-  "generated_at": "2026-03-22T10:56:32.317610Z",
+  "generated_at": "2026-03-23T11:57:27.263038Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 14
+    "games_count": 2
   },
   "todays_games": [
     {
-      "time_et": "11:10 AM",
-      "matchup": "Miami Hurricanes @ Purdue Boilermakers",
-      "market_spread": -7.5,
-      "model_spread": -7.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "1:45 PM",
-      "matchup": "Kentucky Wildcats @ Iowa State Cyclones",
-      "market_spread": -4.5,
-      "model_spread": -4.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "3:30 PM",
-      "matchup": "Illinois St Redbirds @ Wake Forest Demon Deacons",
-      "market_spread": -7.5,
-      "model_spread": -7.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "4:15 PM",
-      "matchup": "St. John's Red Storm @ Kansas Jayhawks",
-      "market_spread": 3.5,
-      "model_spread": 3.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "5:10 PM",
-      "matchup": "Tennessee Volunteers @ Virginia Cavaliers",
-      "market_spread": 1.5,
-      "model_spread": 1.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "5:30 PM",
-      "matchup": "Seattle Redhawks @ Auburn Tigers",
-      "market_spread": -12.5,
-      "model_spread": -12.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "6:00 PM",
-      "matchup": "UNLV Rebels @ Tulsa Golden Hurricane",
-      "market_spread": -4.5,
-      "model_spread": -4.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "6:10 PM",
-      "matchup": "Iowa Hawkeyes @ Florida Gators",
-      "market_spread": -10.5,
-      "model_spread": -10.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "6:50 PM",
-      "matchup": "Utah State Aggies @ Arizona Wildcats",
-      "market_spread": -11.5,
-      "model_spread": -11.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "7:00 PM",
-      "matchup": "GW Revolutionaries @ New Mexico Lobos",
-      "market_spread": -7.5,
-      "model_spread": -7.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "7:30 PM",
-      "matchup": "Wichita St Shockers @ Oklahoma St Cowboys",
+      "time_et": "12:57 PM",
+      "matchup": "Team B @ Team A",
       "market_spread": -3.5,
       "model_spread": -3.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "DraftKings"
+      "book": "sample"
     },
     {
-      "time_et": "7:45 PM",
-      "matchup": "UCLA Bruins @ UConn Huskies",
-      "market_spread": -4.5,
-      "model_spread": -4.5,
+      "time_et": "2:57 PM",
+      "matchup": "Team D @ Team C",
+      "market_spread": 6.0,
+      "model_spread": 6.0,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "8:00 PM",
-      "matchup": "Saint Joseph's Hawks @ California Golden Bears",
-      "market_spread": -5.5,
-      "model_spread": -5.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "8:45 PM",
-      "matchup": "Texas Tech Red Raiders @ Alabama Crimson Tide",
-      "market_spread": -1.5,
-      "model_spread": -1.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
+      "book": "sample"
     }
   ]
 }
