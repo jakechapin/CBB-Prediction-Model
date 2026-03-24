@@ -1,31 +1,42 @@
 {
-  "generated_at": "2026-03-23T11:57:27.263038Z",
+  "generated_at": "2026-03-24T11:59:57.316346Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 2
+    "games_count": 3
   },
   "todays_games": [
     {
-      "time_et": "12:57 PM",
-      "matchup": "Team B @ Team A",
+      "time_et": "6:00 PM",
+      "matchup": "Wichita St Shockers @ Tulsa Golden Hurricane",
       "market_spread": -3.5,
       "model_spread": -3.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "sample"
+      "book": "FanDuel"
     },
     {
-      "time_et": "2:57 PM",
-      "matchup": "Team D @ Team C",
-      "market_spread": 6.0,
-      "model_spread": 6.0,
+      "time_et": "8:00 PM",
+      "matchup": "Saint Joseph's Hawks @ New Mexico Lobos",
+      "market_spread": -11.5,
+      "model_spread": -11.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "sample"
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "6:00 PM",
+      "matchup": "Illinois St Redbirds @ Dayton Flyers",
+      "market_spread": -7.5,
+      "model_spread": -7.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
     }
   ]
 }
