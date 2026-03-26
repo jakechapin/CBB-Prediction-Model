@@ -1,32 +1,10 @@
 {
-  "generated_at": "2026-03-25T11:59:30.602234Z",
+  "generated_at": "2026-03-26T12:05:38.587271Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 4
+    "games_count": 6
   },
   "todays_games": [
-    {
-      "time_et": "6:00 PM",
-      "matchup": "Illinois St Redbirds @ Dayton Flyers",
-      "market_spread": -6.5,
-      "model_spread": -6.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "8:00 PM",
-      "matchup": "Nevada Wolf Pack @ Auburn Tigers",
-      "market_spread": -9.5,
-      "model_spread": -9.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
-    },
     {
       "time_et": "6:10 PM",
       "matchup": "Texas Longhorns @ Purdue Boilermakers",
@@ -43,6 +21,50 @@
       "matchup": "Iowa Hawkeyes @ Nebraska Cornhuskers",
       "market_spread": -1.5,
       "model_spread": -1.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "8:45 PM",
+      "matchup": "Arkansas Razorbacks @ Arizona Wildcats",
+      "market_spread": -7.5,
+      "model_spread": -7.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "9:05 PM",
+      "matchup": "Illinois Fighting Illini @ Houston Cougars",
+      "market_spread": -2.5,
+      "model_spread": -2.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "6:10 PM",
+      "matchup": "St. John's Red Storm @ Duke Blue Devils",
+      "market_spread": -6.5,
+      "model_spread": -6.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "DraftKings"
+    },
+    {
+      "time_et": "6:35 PM",
+      "matchup": "Alabama Crimson Tide @ Michigan Wolverines",
+      "market_spread": -9.5,
+      "model_spread": -9.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
