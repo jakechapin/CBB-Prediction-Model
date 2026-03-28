@@ -1,59 +1,48 @@
 {
-  "generated_at": "2026-03-27T11:59:21.797754Z",
+  "generated_at": "2026-03-28T11:02:41.938405Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 5
+    "games_count": 4
   },
   "todays_games": [
-    {
-      "time_et": "6:10 PM",
-      "matchup": "St. John's Red Storm @ Duke Blue Devils",
-      "market_spread": -6.5,
-      "model_spread": -6.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "6:35 PM",
-      "matchup": "Alabama Crimson Tide @ Michigan Wolverines",
-      "market_spread": -8.5,
-      "model_spread": -8.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "8:45 PM",
-      "matchup": "Michigan St Spartans @ UConn Huskies",
-      "market_spread": -1.5,
-      "model_spread": -1.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
-    {
-      "time_et": "9:10 PM",
-      "matchup": "Tennessee Volunteers @ Iowa State Cyclones",
-      "market_spread": -3.5,
-      "model_spread": -3.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "DraftKings"
-    },
     {
       "time_et": "5:09 PM",
       "matchup": "Iowa Hawkeyes @ Illinois Fighting Illini",
       "market_spread": -6.5,
       "model_spread": -6.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "7:49 PM",
+      "matchup": "Purdue Boilermakers @ Arizona Wildcats",
+      "market_spread": -5.5,
+      "model_spread": -5.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "1:15 PM",
+      "matchup": "Tennessee Volunteers @ Michigan Wolverines",
+      "market_spread": -7.5,
+      "model_spread": -7.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "4:05 PM",
+      "matchup": "UConn Huskies @ Duke Blue Devils",
+      "market_spread": -5.5,
+      "model_spread": -5.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
