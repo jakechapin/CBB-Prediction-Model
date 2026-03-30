@@ -1,31 +1,31 @@
 {
-  "generated_at": "2026-03-29T11:04:05.802857Z",
+  "generated_at": "2026-03-30T12:09:06.653624Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
     "games_count": 2
   },
   "todays_games": [
     {
-      "time_et": "1:15 PM",
-      "matchup": "Tennessee Volunteers @ Michigan Wolverines",
-      "market_spread": -7.5,
-      "model_spread": -7.5,
+      "time_et": "1:09 PM",
+      "matchup": "Team B @ Team A",
+      "market_spread": -3.5,
+      "model_spread": -3.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "FanDuel"
+      "book": "sample"
     },
     {
-      "time_et": "4:05 PM",
-      "matchup": "UConn Huskies @ Duke Blue Devils",
-      "market_spread": -5.5,
-      "model_spread": -5.5,
+      "time_et": "3:09 PM",
+      "matchup": "Team D @ Team C",
+      "market_spread": 6.0,
+      "model_spread": 6.0,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "FanDuel"
+      "book": "sample"
     }
   ]
 }
