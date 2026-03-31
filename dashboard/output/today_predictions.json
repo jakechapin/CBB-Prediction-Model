@@ -1,31 +1,20 @@
 {
-  "generated_at": "2026-03-30T12:09:06.653624Z",
+  "generated_at": "2026-03-31T12:05:17.306217Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 2
+    "games_count": 1
   },
   "todays_games": [
     {
-      "time_et": "1:09 PM",
-      "matchup": "Team B @ Team A",
-      "market_spread": -3.5,
-      "model_spread": -3.5,
-      "edge_pts": 0.0,
+      "time_et": "7:00 PM",
+      "matchup": "Oklahoma Sooners @ Colorado Buffaloes",
+      "market_spread": null,
+      "model_spread": null,
+      "edge_pts": null,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "sample"
-    },
-    {
-      "time_et": "3:09 PM",
-      "matchup": "Team D @ Team C",
-      "market_spread": 6.0,
-      "model_spread": 6.0,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "sample"
+      "book": ""
     }
   ]
 }
