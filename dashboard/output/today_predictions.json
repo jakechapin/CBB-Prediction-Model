@@ -1,37 +1,15 @@
 {
-  "generated_at": "2026-04-01T12:06:45.377061Z",
+  "generated_at": "2026-04-02T10:41:23.335008Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
     "games_count": 4
   },
   "todays_games": [
     {
-      "time_et": "7:00 PM",
-      "matchup": "Oklahoma Sooners @ Colorado Buffaloes",
-      "market_spread": null,
-      "model_spread": null,
-      "edge_pts": null,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": ""
-    },
-    {
-      "time_et": "9:30 PM",
-      "matchup": "Baylor Bears @ Minnesota Golden Gophers",
-      "market_spread": null,
-      "model_spread": null,
-      "edge_pts": null,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": ""
-    },
-    {
       "time_et": "6:00 PM",
       "matchup": "New Mexico Lobos @ Tulsa Golden Hurricane",
-      "market_spread": 4.5,
-      "model_spread": 4.5,
+      "market_spread": 3.5,
+      "model_spread": 3.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
@@ -41,6 +19,28 @@
     {
       "time_et": "7:00 PM",
       "matchup": "Stanford Cardinal @ West Virginia Mountaineers",
+      "market_spread": 1.5,
+      "model_spread": 1.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "8:30 PM",
+      "matchup": "Illinois St Redbirds @ Auburn Tigers",
+      "market_spread": -6.5,
+      "model_spread": -6.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "9:30 PM",
+      "matchup": "Rutgers Scarlet Knights @ Creighton Bluejays",
       "market_spread": null,
       "model_spread": null,
       "edge_pts": null,
