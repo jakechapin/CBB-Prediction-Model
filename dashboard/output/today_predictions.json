@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-04-03T10:33:28.913214Z",
+  "generated_at": "2026-04-04T10:22:41.875799Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 2
+    "games_count": 4
   },
   "todays_games": [
     {
@@ -17,10 +17,32 @@
       "book": "FanDuel"
     },
     {
+      "time_et": "3:00 PM",
+      "matchup": "West Virginia Mountaineers @ Creighton Bluejays",
+      "market_spread": -1.5,
+      "model_spread": -1.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
       "time_et": "5:09 PM",
       "matchup": "Illinois Fighting Illini @ UConn Huskies",
-      "market_spread": 2.5,
-      "model_spread": 2.5,
+      "market_spread": 1.5,
+      "model_spread": 1.5,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "FanDuel"
+    },
+    {
+      "time_et": "7:49 PM",
+      "matchup": "Michigan Wolverines @ Arizona Wildcats",
+      "market_spread": 1.5,
+      "model_spread": 1.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
