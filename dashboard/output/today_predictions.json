@@ -1,31 +1,20 @@
 {
-  "generated_at": "2026-04-05T10:22:37.977510Z",
+  "generated_at": "2026-04-06T10:45:10.501553Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 2
+    "games_count": 1
   },
   "todays_games": [
     {
-      "time_et": "4:30 PM",
-      "matchup": "Oklahoma Sooners @ West Virginia Mountaineers",
-      "market_spread": 3.5,
-      "model_spread": 3.5,
+      "time_et": "8:00 PM",
+      "matchup": "UConn Huskies @ Michigan Wolverines",
+      "market_spread": -7.5,
+      "model_spread": -7.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "FanDuel"
-    },
-    {
-      "time_et": "7:00 PM",
-      "matchup": "Tulsa Golden Hurricane @ Auburn Tigers",
-      "market_spread": -5.5,
-      "model_spread": -5.5,
-      "edge_pts": 0.0,
-      "win_prob": 0.5,
-      "confidence": 0,
-      "note": "Missing ratings",
-      "book": "FanDuel"
+      "book": "DraftKings"
     }
   ]
 }
