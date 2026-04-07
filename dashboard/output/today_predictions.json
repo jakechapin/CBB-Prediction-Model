@@ -1,20 +1,31 @@
 {
-  "generated_at": "2026-04-06T10:45:10.501553Z",
+  "generated_at": "2026-04-07T10:45:24.286245Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
-    "games_count": 1
+    "games_count": 2
   },
   "todays_games": [
     {
-      "time_et": "8:00 PM",
-      "matchup": "UConn Huskies @ Michigan Wolverines",
-      "market_spread": -7.5,
-      "model_spread": -7.5,
+      "time_et": "11:45 AM",
+      "matchup": "Team B @ Team A",
+      "market_spread": -3.5,
+      "model_spread": -3.5,
       "edge_pts": 0.0,
       "win_prob": 0.5,
       "confidence": 0,
       "note": "Missing ratings",
-      "book": "DraftKings"
+      "book": "sample"
+    },
+    {
+      "time_et": "1:45 PM",
+      "matchup": "Team D @ Team C",
+      "market_spread": 6.0,
+      "model_spread": 6.0,
+      "edge_pts": 0.0,
+      "win_prob": 0.5,
+      "confidence": 0,
+      "note": "Missing ratings",
+      "book": "sample"
     }
   ]
 }
