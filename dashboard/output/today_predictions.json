@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-08-27T20:02:24.927811Z",
+  "generated_at": "2026-08-28T21:00:57.092149Z",
   "model_version": "v0.6-eff-safe",
   "summary": {
     "games_count": 2
   },
   "todays_games": [
     {
-      "time_et": "9:02 PM",
+      "time_et": "10:00 PM",
       "matchup": "Team B @ Team A",
       "market_spread": -3.5,
       "model_spread": -3.5,
@@ -17,7 +17,7 @@
       "book": "sample"
     },
     {
-      "time_et": "11:02 PM",
+      "time_et": "12:00 AM",
       "matchup": "Team D @ Team C",
       "market_spread": 6.0,
       "model_spread": 6.0,
